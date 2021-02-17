@@ -21,9 +21,6 @@ class ProductMutation : Mutation {
     }
 
     fun deleteProduct(productId: String): String? {
-        var deletedProduct = productService.getProductById(productId)
-        productService.deleteProduct(productId)
-        return ("Product deleted: $deletedProduct")
+        return productService.deleteProduct(productId)
     }
-
 }

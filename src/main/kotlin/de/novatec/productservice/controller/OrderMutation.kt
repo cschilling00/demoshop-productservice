@@ -20,7 +20,7 @@ class OrderMutation : Mutation {
         return order?.let { orderService.createOrder(it) }
     }
 
-    fun deleteOrder(orderId: String) {
-        orderService.deleteOrder(orderId)
+    fun deleteOrder(orderId: String): String {
+        return orderService.deleteOrder(orderId)
     }
 }

@@ -1,12 +1,10 @@
 package src.main.kotlin.de.novatec.productservice.service
 
-
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Service
 import src.main.kotlin.de.novatec.productservice.model.Order
 import src.main.kotlin.de.novatec.productservice.repository.OrderRepository
 import src.main.kotlin.de.novatec.productservice.repository.ProductRepository
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Service
-
 
 @Service
 class OrderService {
@@ -44,10 +42,11 @@ class OrderService {
         return orderRepository.save(order)
     }
 
-    fun deleteOrder(orderId: String) {
+    fun deleteOrder(orderId: String): String {
         orderRepository.findById(orderId).orElseThrow {
             throw NoSuchElementException("Order with id ´$orderId´ not found")
         }
         orderRepository.deleteById(orderId)
+        return "Order successfully deleted"
     }
 }

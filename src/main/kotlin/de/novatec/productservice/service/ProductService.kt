@@ -37,10 +37,11 @@ class ProductService {
         return productRepository.save(product)
     }
 
-    fun deleteProduct(productId: String) {
+    fun deleteProduct(productId: String): String {
         productRepository.findById(productId).orElseThrow {
             throw NoSuchElementException("Product with id ´$productId´ not found")
         }
         productRepository.deleteById(productId)
+        return "Product successfully deleted"
     }
 }
