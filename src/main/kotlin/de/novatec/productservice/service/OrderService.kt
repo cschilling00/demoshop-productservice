@@ -29,7 +29,7 @@ class OrderService {
             throw IllegalArgumentException("No Id given")
         } else {
             orderRepository.findById(order.id).orElseThrow {
-                throw NoSuchElementException("Order with id ´$order.id´ not found")
+                throw NoSuchElementException("Order with id ´${order.id}´ not found")
             }
             return orderRepository.save(order)
         }

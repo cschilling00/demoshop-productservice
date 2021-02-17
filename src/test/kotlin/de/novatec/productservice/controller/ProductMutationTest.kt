@@ -17,57 +17,59 @@ import src.test.kotlin.de.novatec.productservice.verifyOnlyDataExists
 @AutoConfigureWebTestClient
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = [ProductServiceApplication::class])
-internal class OrderMutationTest() {
+internal class ProductMutationTest() {
 
     @Autowired
     private lateinit var testClient: WebTestClient
 
     @Test
-    fun `should edit order`() {
+    fun `should edit product`() {
 
-        val query = "editOrder"
+        val query = "editProduct"
 
         testClient.post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(order: {id: \"602b936938e5ee596440a814\", orderDate: \"9.2.2021\", price: 710, productIds: [\"602b936938e5ee596440a811\",\"602b936938e5ee596440a812\"]}) { orderDate, id, productIds, price } }")
+            .bodyValue("mutation { $query(product: {id: \"602b936938e5ee596440a812\", name: \"mp3 Player\", description: \"lala lala\", price: 155, category: MP3}) { name, id, description, price, category } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.orderDate").isEqualTo("9.2.2021")
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a814")
-            .jsonPath("$DATA_JSON_PATH.$query.productIds").isEqualTo(arrayListOf("602b936938e5ee596440a811", "602b936938e5ee596440a812"))
-            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("710")
+            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("mp3 Player")
+            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a812")
+            .jsonPath("$DATA_JSON_PATH.$query.description").isEqualTo("lala lala")
+            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("155")
+            .jsonPath("$DATA_JSON_PATH.$query.category").isEqualTo("MP3")
     }
 
     @Test
-    fun `should create order`() {
-        val query = "createOrder"
+    fun `should create product`() {
+        val query = "createProduct"
 
         testClient.post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(order: {id: \"602b936938e5ee596440a814\", orderDate: \"10.2.2021\", productIds: [\"602b936938e5ee596440a811\",\"602b936938e5ee596440a811\"], price: 555}) {orderDate, id, productIds, price } }")
+            .bodyValue("mutation { $query(product: {id: \"602b936938e5ee596440a818\", name: \"mp3 Player\", description: \"lala lala\", price: 155, category:MP3}) {name, id, description, price, category } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.orderDate").isEqualTo("10.2.2021")
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a814")
-            .jsonPath("$DATA_JSON_PATH.$query.productIds").isEqualTo(arrayListOf("602b936938e5ee596440a811", "602b936938e5ee596440a811"))
-            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("555")
+            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a818")
+            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("mp3 Player")
+            .jsonPath("$DATA_JSON_PATH.$query.description").isEqualTo("lala lala")
+            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("155")
+            .jsonPath("$DATA_JSON_PATH.$query.category").isEqualTo("MP3")
     }
 
     @Test
-    fun `should delete order`() {
+    fun `should delete product`() {
 
-        val query = "deleteOrder"
-        val data = "Order successfully deleted"
+        val query = "deleteProduct"
+        val data = "Product successfully deleted"
 
         testClient.post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(orderId: \"602b936938e5ee596440a813\")}")
+            .bodyValue("mutation { $query(productId: \"602b936938e5ee596440a811\")}")
             .exchange()
             .verifyData(query, data)
     }

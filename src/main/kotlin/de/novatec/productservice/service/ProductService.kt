@@ -27,7 +27,7 @@ class ProductService {
             throw IllegalArgumentException("No Id given")
         } else {
             productRepository.findById(product.id).orElseThrow {
-                throw NoSuchElementException("Order with id ´$product.id´ not found")
+                throw NoSuchElementException("Product with id ´$product.id´ not found")
             }
             return productRepository.save(product)
         }
