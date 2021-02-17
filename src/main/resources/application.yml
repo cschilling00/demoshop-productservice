@@ -1,0 +1,10 @@
+
+graphql:
+  packages: "src.main.kotlin.de.novatec.productservice"
+
+spring:
+  data:
+    mongodb:
+      port: 27017
+      database: GraphqlDemoShopDb
+      host: localhost
