@@ -1,6 +1,5 @@
-
-graphql:
-  packages: "src.main.kotlin.de.novatec.productservice"
+server:
+  port : 8080
 
 spring:
   data:
@@ -11,6 +10,8 @@ spring:
 
 logging:
   level:
+    graphql:
+      GraphQL: DEBUG
     org:
       springframework:
         web: DEBUG

@@ -1,13 +1,13 @@
 package src.main.kotlin.de.novatec.productservice.controller
 
-import com.expediagroup.graphql.spring.operations.Mutation
-import src.main.kotlin.de.novatec.productservice.model.Product
+import com.coxautodev.graphql.tools.GraphQLMutationResolver
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import src.main.kotlin.de.novatec.productservice.model.Product
 import src.main.kotlin.de.novatec.productservice.service.ProductService
 
 @Component
-class ProductMutation : Mutation {
+class ProductMutation : GraphQLMutationResolver {
 
     @Autowired
     private lateinit var productService: ProductService

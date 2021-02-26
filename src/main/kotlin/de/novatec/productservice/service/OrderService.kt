@@ -25,11 +25,13 @@ class OrderService {
     }
 
     fun updateOrder(order: Order): Order? {
-        if (order.id == null) {
+        if (order.id == "") {
             throw IllegalArgumentException("No Id given")
         } else {
-            orderRepository.findById(order.id).orElseThrow {
-                throw NoSuchElementException("Order with id ´${order.id}´ not found")
+            order.id?.let {
+                orderRepository.findById(it).orElseThrow {
+                    throw NoSuchElementException("Order with id ´${order.id}´ not found")
+                }
             }
             return orderRepository.save(order)
         }
