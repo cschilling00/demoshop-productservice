@@ -1,6 +1,7 @@
 package src.main.kotlin.de.novatec.productservice.service
 
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import src.main.kotlin.de.novatec.productservice.model.Order
 import src.main.kotlin.de.novatec.productservice.repository.OrderRepository
@@ -18,6 +19,10 @@ class OrderService {
         return orderRepository.findById(id).orElseThrow {
             throw NoSuchElementException("Order with id ´$id´ not found")
         }
+    }
+
+    fun getOrderByUserId(id: String): List<Order?> {
+        return orderRepository.getOrderByUserId(id)
     }
 
     fun getOrder(): List<Order?> {
@@ -38,8 +43,8 @@ class OrderService {
     }
 
     fun createOrder(order: Order): Order {
-        order.productIds.filterNotNull().forEach {
-            productRepository.findById(it).orElseThrow { NoSuchElementException("Product with id ´$it´ not found") }
+        order.products.filterNotNull().forEach {
+            productRepository.findById(it.id).orElseThrow { NoSuchElementException("Product with id ´${it.id}´ not found") }
         }
         return orderRepository.save(order)
     }

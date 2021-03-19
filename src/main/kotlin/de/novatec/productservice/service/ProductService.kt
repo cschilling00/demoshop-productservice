@@ -1,6 +1,5 @@
 package src.main.kotlin.de.novatec.productservice.service
 
-import org.bson.types.ObjectId
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import src.main.kotlin.de.novatec.productservice.model.Product
@@ -27,7 +26,7 @@ class ProductService {
             throw IllegalArgumentException("No Id given")
         } else {
             productRepository.findById(product.id).orElseThrow {
-                throw NoSuchElementException("Product with id ´$product.id´ not found")
+                throw NoSuchElementException("Product with id ´${product.id}´ not found")
             }
             return productRepository.save(product)
         }

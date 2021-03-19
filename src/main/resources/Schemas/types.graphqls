@@ -11,14 +11,15 @@ type Product {
     id: String!
     name: String!
     description: String!
-    price: Int!
+    price: Float!
     category: Category
 }
 type Order {
     id: String!,
-    productIds: [String]!
+    products: [Product]!
     orderDate: String!,
-    price: Int!
+    price: Float!
+    userId: String!
 }
 
 enum Category {
@@ -29,15 +30,17 @@ input ProductInput {
     id: String!
     name: String!
     description: String!
-    price: Int!
+    price: Float!
     category: Category
+    __typename: String
 }
 
 input OrderInput {
     id: String!,
-    productIds: [String]!
+    products: [ProductInput]!
     orderDate: String!,
-    price: Int!
+    price: Float!
+    userId: String!
 }
 
 type Query {
@@ -45,4 +48,5 @@ type Query {
     getProductById(id: String!): Product
     getOrders: [Order]!
     getOrderById(id: String!): Order
+    getOrderByUserId(id: String!): [Order]!
 }

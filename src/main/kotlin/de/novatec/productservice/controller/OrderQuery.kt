@@ -22,4 +22,9 @@ class OrderQuery : GraphQLQueryResolver {
     fun getOrderById(id: String): Order? {
         return orderService.getOrderById(id)
     }
+
+    @PreAuthorize("hasAuthority('user')")
+    fun getOrderByUserId(id: String): List<Order?> {
+        return orderService.getOrderByUserId(id)
+    }
 }

@@ -1,14 +1,11 @@
 package src.main.kotlin.de.novatec.productservice.configuration
 
-import com.fasterxml.jackson.core.type.TypeReference
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.ObjectReader
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
-import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.AuthorityUtils
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component
@@ -33,8 +30,9 @@ class JwtFilter() : OncePerRequestFilter() {
         val node: JsonNode = jacksonObjectMapper().readValue(result.body.toString())
 
         SecurityContextHolder.getContext().authentication =
-                JWTPreAuthenticationToken(
-                        AuthorityUtils.commaSeparatedStringToAuthorityList(node.get("data").get("getAuthorities").asText()))
+            JWTPreAuthenticationToken(
+                AuthorityUtils.commaSeparatedStringToAuthorityList(node.get("data").get("getAuthorities").asText())
+            )
         println(SecurityContextHolder.getContext().authentication)
         filterChain.doFilter(request, response)
     }
@@ -44,5 +42,4 @@ class JwtFilter() : OncePerRequestFilter() {
             ?.split("Bearer ")
             ?.last()
     }
-
 }

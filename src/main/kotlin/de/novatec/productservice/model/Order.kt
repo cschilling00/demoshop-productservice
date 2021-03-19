@@ -7,7 +7,8 @@ import org.springframework.data.mongodb.core.mapping.Document
 data class Order(
     @Id
     val id: String,
-    val productIds: List<String?>,
+    val products: List<Product?>,
     val orderDate: String,
-    val price: Int
+    val price: Float,
+    val userId: String
 )

@@ -13,7 +13,6 @@ class ProductMutation : GraphQLMutationResolver {
     @Autowired
     private lateinit var productService: ProductService
 
-
     fun editProduct(product: Product?): Product? {
         return product?.let { productService.updateProduct(it) }
     }
