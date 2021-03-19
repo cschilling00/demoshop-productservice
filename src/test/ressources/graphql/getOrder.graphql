@@ -1,0 +1,12 @@
+getOrder {
+    products{
+        id
+        name
+        description
+        price
+    }
+    orderDate
+    price
+    userId
+    id
+}
