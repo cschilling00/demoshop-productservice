@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -13,8 +12,8 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>graphql-product-service</name>
 	<properties>
-		<java.version>11</java.version>
-		<kotlin.version>1.4.21</kotlin.version>
+		<java.version>14</java.version>
+		<kotlin.version>1.5.10</kotlin.version>
 		<project.basedir>src/main/kotlin</project.basedir>
 	</properties>
 	<dependencies>
@@ -67,12 +66,10 @@
 			<groupId>com.graphql-java-kickstart</groupId>
 			<artifactId>playground-spring-boot-starter</artifactId>
 			<version>5.10.0</version>
-			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.graphql-java-kickstart</groupId>
-			<artifactId>playground-spring-boot-starter</artifactId>
-			<version>5.10.0</version>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter-api</artifactId>
 		</dependency>
 	</dependencies>
 
