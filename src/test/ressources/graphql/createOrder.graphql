@@ -1,9 +1,0 @@
-mutation {
-    createOrder(order: {id: "", orderDate: "564", productIds: ["askljd","asda"], price: 155}) {
-        id
-        orderDate
-        price
-        productIds
-    }
-
-}

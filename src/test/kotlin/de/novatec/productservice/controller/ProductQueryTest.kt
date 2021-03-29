@@ -13,20 +13,20 @@ import src.test.kotlin.de.novatec.productservice.*
 @AutoConfigureWebTestClient
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @SpringBootTest(classes = [ProductServiceApplication::class])
-internal class OrderQueryTest {
+internal class ProductQueryTest {
 
     @Autowired
     private lateinit var testClient: WebTestClient
 
     @Test
-    fun `should get order`() {
-        val query = "getOrder"
+    fun `should get product`() {
+        val query = "getProduct"
 
         testClient.post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("query { $query {orderDate, id, productIds, price } }")
+            .bodyValue("query { $query {name, id, description, price, category } }")
             .exchange()
             .verifyOnlyDataExists(query)
 //            .jsonPath("$DATA_JSON_PATH.$query.orderDate").isEqualTo("9.2.2021")
@@ -36,19 +36,20 @@ internal class OrderQueryTest {
     }
 
     @Test
-    fun `should get order by id`() {
-        val query = "getOrderById"
+    fun `should get product by id`() {
+        val query = "getProductById"
 
         testClient.post()
             .uri(GRAPHQL_ENDPOINT)
             .accept(MediaType.APPLICATION_JSON)
             .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("query { $query(id: \"602b936938e5ee596440a813\") {orderDate, id, productIds, price } }")
+            .bodyValue("query { $query(id: \"602b936938e5ee596440a811\") {name, id, description, price, category } }")
             .exchange()
             .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.orderDate").isEqualTo("9.2.2021")
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a813")
-            .jsonPath("$DATA_JSON_PATH.$query.productIds").isEqualTo(arrayListOf("602b936938e5ee596440a811", "602b936938e5ee596440a812"))
-            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("610")
+            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("Handy")
+            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a811")
+            .jsonPath("$DATA_JSON_PATH.$query.description").isEqualTo("Bestes Handy")
+            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("255")
+            .jsonPath("$DATA_JSON_PATH.$query.category").isEqualTo("SMARTPHONE")
     }
 }
