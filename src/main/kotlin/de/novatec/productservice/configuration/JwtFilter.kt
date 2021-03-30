@@ -1,8 +1,5 @@
 package src.main.kotlin.de.novatec.productservice.configuration
 
-import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import com.fasterxml.jackson.module.kotlin.readValue
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
@@ -25,13 +22,12 @@ class JwtFilter() : OncePerRequestFilter() {
         var headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         headers.setBearerAuth(token.toString())
-        val request2 = HttpEntity("{\"query\": \"mutation { getAuthorities }\"}", headers)
-        val result = RestTemplate().postForEntity("http://localhost:8081/graphql", request2, String::class.java)
-        val node: JsonNode = jacksonObjectMapper().readValue(result.body.toString())
+        val request2 = HttpEntity("", headers)
+        val result = RestTemplate().getForEntity("http://localhost:8081/users/authorities", String::class.java)
 
         SecurityContextHolder.getContext().authentication =
             JWTPreAuthenticationToken(
-                AuthorityUtils.commaSeparatedStringToAuthorityList(node.get("data").get("getAuthorities").asText())
+                AuthorityUtils.commaSeparatedStringToAuthorityList(result.toString())
             )
         println(SecurityContextHolder.getContext().authentication)
         filterChain.doFilter(request, response)
