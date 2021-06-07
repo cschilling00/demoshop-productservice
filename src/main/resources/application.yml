@@ -14,5 +14,5 @@ logging:
       GraphQL: DEBUG
     org:
       springframework:
-        web: DEBUG
+        web: TRACE
         security: DEBUG
