@@ -22,6 +22,13 @@ class OrderController(
     fun getOrderById(@PathVariable id: String): Order? {
         return orderService.getOrderById(id)
     }
+
+    @PreAuthorize("hasAuthority('user')")
+    @GetMapping("/myOrders/{id}")
+    fun getOrderByUserId(@PathVariable id: String): List<Order?> {
+        return orderService.getOrderByUserId(id)
+    }
+
     @PostMapping
     @PreAuthorize("hasAuthority('user')")
     fun createOrder(@RequestBody order: Order?): Order? {

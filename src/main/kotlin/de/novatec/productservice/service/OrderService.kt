@@ -44,7 +44,7 @@ class OrderService {
 
     fun createOrder(order: Order): Order {
         order.products?.filterNotNull()?.forEach {
-            productRepository.findById(it.id).orElseThrow { NoSuchElementException("Product with id ´${it.id}´ not found") }
+            it.id?.let { it1 -> productRepository.findById(it1).orElseThrow { NoSuchElementException("Product with id ´${it.id}´ not found") } }
         }
         return orderRepository.save(order)
     }
