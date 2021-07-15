@@ -1,55 +1,66 @@
 package src.test.kotlin.de.novatec.productservice.controller
 
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.TestInstance
+import com.graphql.spring.boot.test.GraphQLTestTemplate
+import org.junit.jupiter.api.*
+import org.junit.jupiter.api.extension.ExtendWith
+import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
-import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import src.main.kotlin.de.novatec.productservice.ProductServiceApplication
-import src.test.kotlin.de.novatec.productservice.*
+import src.main.kotlin.de.novatec.productservice.model.Category
+import src.main.kotlin.de.novatec.productservice.model.Order
+import src.main.kotlin.de.novatec.productservice.model.Product
+import src.main.kotlin.de.novatec.productservice.repository.OrderRepository
+import src.main.kotlin.de.novatec.productservice.repository.ProductRepository
+import java.io.File
+import java.nio.charset.Charset
 
-@AutoConfigureWebTestClient
+@ExtendWith(
+    SpringExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(classes = [ProductServiceApplication::class])
-internal class ProductQueryTest {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [ProductServiceApplication::class])
+internal class ProductQueryTest(@Autowired val graphQLTestTemplate: GraphQLTestTemplate,
+                                @Autowired val productRepository: ProductRepository,
+                                @Autowired val orderRepository: OrderRepository) {
 
-    @Autowired
-    private lateinit var testClient: WebTestClient
+    @BeforeAll
+    fun setHeaderForUser() {
+        graphQLTestTemplate.addHeader(
+            "Authorization",
+            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJleHAiOjE2MjQ1NTY2MDYsImlhdCI6MTYyNDU0MjIwNn0.wVK4ORU19UDmuAjZukPqIyk4jRnelCygRORNk-zLsAm99G9nItKlnAYOhRmed8ovQuhQ4voWCM_5HxJtG4b7bA"
+        )
+    }
 
-    @Test
-    fun `should get product`() {
-        val query = "getProduct"
+    @BeforeAll
+    fun loadRepository(){
+        productRepository.deleteAll()
+        productRepository.save(Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE))
+        productRepository.save(Product("602b936938e5ee596440a812", "iPod", "Device to listen to music or play games", 355f, Category.MP3))
 
-        testClient.post()
-            .uri(GRAPHQL_ENDPOINT)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("query { $query {name, id, description, price, category } }")
-            .exchange()
-            .verifyOnlyDataExists(query)
-//            .jsonPath("$DATA_JSON_PATH.$query.orderDate").isEqualTo("9.2.2021")
-//            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a813")
-//            .jsonPath("$DATA_JSON_PATH.$query.productIds").isEqualTo(arrayListOf("602b936938e5ee596440a811", "602b936938e5ee596440a812"))
-//            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("610")
+        orderRepository.deleteAll()
+        orderRepository.save(Order("602b936938e5ee596440a813", listOf(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE), Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "9.2.2021", 610f, "602a74164f9ff6408aad5da6"))
+        orderRepository.save(Order("602b936938e5ee596440a814", listOf(Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "8.2.2021", 810f, "602a74164f9ff6408aad5da7"))
     }
 
     @Test
-    fun `should get product by id`() {
-        val query = "getProductById"
+    fun `should get all products`(){
+        var response = graphQLTestTemplate.postForResource("request/products.graphql")
+//            println("response: "+response.rawResponse.body.toString())
+        val expectedResponse = File("src/test/resources/response/productsRes.json").readText(Charset.defaultCharset())
+        Assertions.assertNotNull(response)
+        Assertions.assertTrue(response.isOk)
+        JSONAssert.assertEquals(expectedResponse, response.rawResponse.body, true)
+    }
 
-        testClient.post()
-            .uri(GRAPHQL_ENDPOINT)
-            .accept(MediaType.APPLICATION_JSON)
-            .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("query { $query(id: \"602b936938e5ee596440a811\") {name, id, description, price, category } }")
-            .exchange()
-            .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("Handy")
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a811")
-            .jsonPath("$DATA_JSON_PATH.$query.description").isEqualTo("Bestes Handy")
-            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("255")
-            .jsonPath("$DATA_JSON_PATH.$query.category").isEqualTo("SMARTPHONE")
+    @Test
+    fun `should get product with id 602b936938e5ee596440a811`(){
+        var response = graphQLTestTemplate.postForResource("request/productById.graphql")
+        val expectedResponse = File("src/test/resources/response/productByIdRes.json").readText(Charset.defaultCharset())
+        Assertions.assertNotNull(response)
+        Assertions.assertTrue(response.isOk)
+        JSONAssert.assertEquals(expectedResponse, response.rawResponse.body, true)
+
+
     }
 }

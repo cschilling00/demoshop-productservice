@@ -1,0 +1,9 @@
+query{
+    getProductById(id: "602b936938e5ee596440a811"){
+        id
+        description
+        name
+        price
+        category
+    }
+}

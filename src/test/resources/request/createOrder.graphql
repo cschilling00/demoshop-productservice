@@ -1,0 +1,13 @@
+mutation{
+    createOrder(order: {id: "", products: [{id: "602b936938e5ee596440a812", name: "iPod", description: "Bester iPod", price: 355, category: MP3 }, {id: "602b936938e5ee596440a812", name: "iPod", description: "Bester iPod", price: 355, category: MP3 }] , orderDate: "05.07.2021", price: 710, userId: "602a74164f9ff6408aad5da7"}){
+        id
+        price
+        orderDate
+        userId
+        products{
+            id
+            name
+            price
+        }
+    }
+}

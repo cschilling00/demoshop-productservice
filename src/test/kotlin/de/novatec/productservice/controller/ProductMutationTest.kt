@@ -1,76 +1,63 @@
 package src.test.kotlin.de.novatec.productservice.controller
 
+import com.graphql.spring.boot.test.GraphQLTestTemplate
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.extension.ExtendWith
+import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType.APPLICATION_JSON
-import org.springframework.test.web.reactive.server.WebTestClient
+import org.springframework.test.context.junit.jupiter.SpringExtension
 import src.main.kotlin.de.novatec.productservice.ProductServiceApplication
-import src.test.kotlin.de.novatec.productservice.DATA_JSON_PATH
-import src.test.kotlin.de.novatec.productservice.GRAPHQL_ENDPOINT
-import src.test.kotlin.de.novatec.productservice.GRAPHQL_MEDIA_TYPE
-import src.test.kotlin.de.novatec.productservice.verifyData
-import src.test.kotlin.de.novatec.productservice.verifyOnlyDataExists
+import src.main.kotlin.de.novatec.productservice.model.Category
+import src.main.kotlin.de.novatec.productservice.model.Order
+import src.main.kotlin.de.novatec.productservice.model.Product
+import src.main.kotlin.de.novatec.productservice.repository.OrderRepository
+import src.main.kotlin.de.novatec.productservice.repository.ProductRepository
+import java.io.File
+import java.nio.charset.Charset
 
-@AutoConfigureWebTestClient
+@ExtendWith(
+    SpringExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-@SpringBootTest(classes = [ProductServiceApplication::class])
-internal class ProductMutationTest() {
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [ProductServiceApplication::class])
+internal class ProductMutationTest(@Autowired val graphQLTestTemplate: GraphQLTestTemplate,
+                                   @Autowired val productRepository: ProductRepository,
+                                   @Autowired val orderRepository: OrderRepository
+) {
 
-    @Autowired
-    private lateinit var testClient: WebTestClient
+    @BeforeAll
+    fun setUp() {
+        graphQLTestTemplate.addHeader(
+            "Authorization",
+            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJleHAiOjE2MjQ1NTY2MDYsImlhdCI6MTYyNDU0MjIwNn0.wVK4ORU19UDmuAjZukPqIyk4jRnelCygRORNk-zLsAm99G9nItKlnAYOhRmed8ovQuhQ4voWCM_5HxJtG4b7bA"
+        )
+    }
 
-    @Test
-    fun `should edit product`() {
+    @BeforeAll
+    fun loadRepository(){
+        productRepository.deleteAll()
+        productRepository.save(Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE))
+        productRepository.save(Product("602b936938e5ee596440a812", "iPod", "Device to listen to music or play games", 355f, Category.MP3))
 
-        val query = "editProduct"
-
-        testClient.post()
-            .uri(GRAPHQL_ENDPOINT)
-            .accept(APPLICATION_JSON)
-            .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(product: {id: \"602b936938e5ee596440a812\", name: \"mp3 Player\", description: \"lala lala\", price: 155, category: MP3}) { name, id, description, price, category } }")
-            .exchange()
-            .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("mp3 Player")
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a812")
-            .jsonPath("$DATA_JSON_PATH.$query.description").isEqualTo("lala lala")
-            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("155")
-            .jsonPath("$DATA_JSON_PATH.$query.category").isEqualTo("MP3")
+        orderRepository.deleteAll()
+        orderRepository.save(Order("602b936938e5ee596440a813", listOf(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE), Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "9.2.2021", 610f, "602a74164f9ff6408aad5da6"))
+        orderRepository.save(Order("602b936938e5ee596440a814", listOf(Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "8.2.2021", 810f, "602a74164f9ff6408aad5da7"))
     }
 
     @Test
-    fun `should create product`() {
-        val query = "createProduct"
-
-        testClient.post()
-            .uri(GRAPHQL_ENDPOINT)
-            .accept(APPLICATION_JSON)
-            .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(product: {id: \"602b936938e5ee596440a818\", name: \"mp3 Player\", description: \"lala lala\", price: 155, category:MP3}) {name, id, description, price, category } }")
-            .exchange()
-            .verifyOnlyDataExists(query)
-            .jsonPath("$DATA_JSON_PATH.$query.id").isEqualTo("602b936938e5ee596440a818")
-            .jsonPath("$DATA_JSON_PATH.$query.name").isEqualTo("mp3 Player")
-            .jsonPath("$DATA_JSON_PATH.$query.description").isEqualTo("lala lala")
-            .jsonPath("$DATA_JSON_PATH.$query.price").isEqualTo("155")
-            .jsonPath("$DATA_JSON_PATH.$query.category").isEqualTo("MP3")
+    fun `should create a new product`(){
+        var response = graphQLTestTemplate.postForResource("request/products.graphql")
+//            println("response: "+response.rawResponse.body.toString())
+        val expectedResponse = File("src/test/resources/response/productsRes.json").readText(Charset.defaultCharset())
+        Assertions.assertNotNull(response)
+        Assertions.assertTrue(response.isOk)
+        JSONAssert.assertEquals(expectedResponse, response.rawResponse.body, true)
     }
 
-    @Test
-    fun `should delete product`() {
 
-        val query = "deleteProduct"
-        val data = "Product successfully deleted"
 
-        testClient.post()
-            .uri(GRAPHQL_ENDPOINT)
-            .accept(APPLICATION_JSON)
-            .contentType(GRAPHQL_MEDIA_TYPE)
-            .bodyValue("mutation { $query(productId: \"602b936938e5ee596440a811\")}")
-            .exchange()
-            .verifyData(query, data)
-    }
+
 }

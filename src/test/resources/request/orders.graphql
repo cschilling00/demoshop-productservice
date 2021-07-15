@@ -1,0 +1,13 @@
+query{
+    getOrders{
+        id
+        price
+        orderDate
+        userId
+        products{
+            id
+            name
+            price
+        }
+    }
+}

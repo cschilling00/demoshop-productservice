@@ -1,0 +1,9 @@
+query{
+    getProducts {
+        id
+        description
+        name
+        price
+        category
+    }
+}

@@ -13,8 +13,8 @@ import src.main.kotlin.de.novatec.productservice.repository.ProductRepository
 class ProductServiceApplication(var productRepository: ProductRepository, var orderRepository: OrderRepository) : CommandLineRunner {
 	override fun run(vararg args: String?) {
 		productRepository.deleteAll()
-		productRepository.save(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE))
-		productRepository.save(Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3))
+		productRepository.save(Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE))
+		productRepository.save(Product("602b936938e5ee596440a812", "iPod", "Device to listen to music or play games", 355f, Category.MP3))
 		println(productRepository.findAll())
 
 		orderRepository.deleteAll()

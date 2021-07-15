@@ -1,0 +1,10 @@
+query {
+    getOrderByUserId(id:"602a74164f9ff6408aad5da6") {
+        orderDate
+        price
+        products{
+            name
+            price
+        }
+    }
+}
