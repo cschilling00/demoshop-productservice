@@ -27,7 +27,7 @@ internal class ProductServiceTest{
     lateinit var productService: ProductService
 
     @Test
-    fun `Service should get all products from mocked Repository`() {
+    fun `should get all products from mocked Repository`() {
         val products = listOf<Product>(Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE), Product("602b936938e5ee596440a812", "iPod", "Device to listen to music or play games", 355f, Category.MP3))
         every { productRepository.findAll() } returns products
         val serviceResult = productService.getProduct()
@@ -35,7 +35,7 @@ internal class ProductServiceTest{
     }
 
     @Test
-    fun `Service should get product with id 602b936938e5ee596440a811 from mocked Repository`() {
+    fun `should get product with id 602b936938e5ee596440a811 from mocked Repository`() {
         var product = Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE)
         every { productRepository.findById("602b936938e5ee596440a811") } returns Optional.ofNullable(product) as Optional<Product?>
         val serviceResult = productService.getProductById("602b936938e5ee596440a811")
@@ -43,7 +43,7 @@ internal class ProductServiceTest{
     }
 
     @Test
-    fun `Service should throw exception while trying to get non existing product from mocked Repository`() {
+    fun `should throw exception while trying to get non existing product from mocked Repository`() {
         val product = Optional.ofNullable(null)
         every { productRepository.findById("602b936938e5ee596440a811") } returns product as Optional<Product?>
         assertThrows(NoSuchElementException::class.java, { productService.getProductById("602b936938e5ee596440a811") })
