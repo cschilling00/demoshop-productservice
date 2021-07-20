@@ -22,21 +22,4 @@ class ProductController(
     fun getProductById(@PathVariable id: String): Product? {
         return productService.getProductById(id)
     }
-    @PostMapping
-    @PreAuthorize("hasAuthority('user')")
-    fun createProduct(@RequestBody product: Product?): Product? {
-        return product?.let { productService.createProduct(it) }
-    }
-
-    @PreAuthorize("hasAuthority('user')")
-    @PatchMapping
-    fun editProduct(@RequestBody product: Product?): Product? {
-        return product?.let { productService.updateProduct(it) }
-    }
-
-    @PreAuthorize("hasAuthority('user')")
-    @DeleteMapping("/{id}")
-    fun deleteProduct(@PathVariable id: String): String? {
-        return productService.deleteProduct(id)
-    }
 }

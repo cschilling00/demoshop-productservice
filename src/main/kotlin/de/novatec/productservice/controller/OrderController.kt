@@ -10,19 +10,6 @@ import src.main.kotlin.de.novatec.productservice.service.OrderService
 class OrderController(
     val orderService: OrderService
 ) {
-
-    @PreAuthorize("hasAuthority('user')")
-    @GetMapping
-    fun getOrders(): List<Order?> {
-        return orderService.getOrder()
-    }
-
-    @PreAuthorize("hasAuthority('user')")
-    @GetMapping("/{id}")
-    fun getOrderById(@PathVariable id: String): Order? {
-        return orderService.getOrderById(id)
-    }
-
     @PreAuthorize("hasAuthority('user')")
     @GetMapping("/myOrders/{id}")
     fun getOrderByUserId(@PathVariable id: String): List<Order?> {
@@ -33,17 +20,5 @@ class OrderController(
     @PreAuthorize("hasAuthority('user')")
     fun createOrder(@RequestBody order: Order?): Order? {
         return order?.let { orderService.createOrder(it) }
-    }
-
-    @PreAuthorize("hasAuthority('user')")
-    @PatchMapping
-    fun editOrder(@RequestBody order: Order?): Order? {
-        return order?.let { orderService.updateOrder(it) }
-    }
-
-    @PreAuthorize("hasAuthority('user')")
-    @DeleteMapping("/{id}")
-    fun deleteOrder(@PathVariable id: String): String? {
-        return orderService.deleteOrder(id)
     }
 }

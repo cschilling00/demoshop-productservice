@@ -1,12 +1,12 @@
 package src.test.kotlin.de.novatec.productservice.controller
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.MappingBuilder
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.github.tomakehurst.wiremock.client.WireMock.aResponse
 import com.github.tomakehurst.wiremock.client.WireMock.containing
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
@@ -22,7 +22,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension
 import org.springframework.test.web.servlet.MockMvc
 import src.main.kotlin.de.novatec.productservice.ProductServiceApplication
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
 import src.main.kotlin.de.novatec.productservice.model.Category
 import src.main.kotlin.de.novatec.productservice.model.Order
 import src.main.kotlin.de.novatec.productservice.model.Product
@@ -30,32 +29,31 @@ import src.main.kotlin.de.novatec.productservice.repository.OrderRepository
 import src.main.kotlin.de.novatec.productservice.repository.ProductRepository
 import src.test.kotlin.de.novatec.productservice.WireMockInitializer
 
-
 @ExtendWith(SpringExtension::class)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @AutoConfigureMockMvc
 @ContextConfiguration(initializers =  [WireMockInitializer::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [ProductServiceApplication::class])
-class OrderControllerTest(@Autowired val mockMvc: MockMvc,
-                          @Autowired val productRepository: ProductRepository,
-                          @Autowired val orderRepository: OrderRepository,
-                          @Autowired val wireMockServer: WireMockServer){
+class ProductControllerTest(@Autowired val mockMvc: MockMvc,
+                            @Autowired val productRepository: ProductRepository,
+                            @Autowired val orderRepository: OrderRepository,
+                            @Autowired val wireMockServer: WireMockServer){
 
-    val token = "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJpYXQiOjE2MjU2ODAzNjN9.TIm2oPpBxcMqVh8lfV_0aj-bcLgK84jn2HJ0wpchZRzWyu-DkozJr5QkPMwCPPBnnYjUQIM1C5c0WjBKgCEgAQ"
+    val token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJleHAiOjE2MjQ1NTY2MDYsImlhdCI6MTYyNDU0MjIwNn0.wVK4ORU19UDmuAjZukPqIyk4jRnelCygRORNk-zLsAm99G9nItKlnAYOhRmed8ovQuhQ4voWCM_5HxJtG4b7bA"
 
     @BeforeEach
     fun callUsermanagement(){
         wireMockServer.stubFor(
             WireMock.get("/users/authorities")
-                .withHeader("Authorization", containing("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJpYXQiOjE2MjU2ODAzNjN9.TIm2oPpBxcMqVh8lfV_0aj-bcLgK84jn2HJ0wpchZRzWyu-DkozJr5QkPMwCPPBnnYjUQIM1C5c0WjBKgCEgAQ"))
+                .withHeader("Authorization", containing("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJleHAiOjE2MjQ1NTY2MDYsImlhdCI6MTYyNDU0MjIwNn0.wVK4ORU19UDmuAjZukPqIyk4jRnelCygRORNk-zLsAm99G9nItKlnAYOhRmed8ovQuhQ4voWCM_5HxJtG4b7bA"))
                 .willReturn(aResponse()
                     .withHeader("Content-Type", MediaType.APPLICATION_JSON_VALUE)
-                    .withBody("user")
+                    .withBody("[ROLE_ANONYMOUS]")
                 )
         );
     }
 
-    @BeforeEach
+    @BeforeAll
     fun loadRepository(){
         productRepository.deleteAll()
         productRepository.save(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE))
@@ -72,11 +70,11 @@ class OrderControllerTest(@Autowired val mockMvc: MockMvc,
     }
 
     @Test
-    fun `should get order by userId`(){
+    fun `should get all products`(){
 
-        val expectedResponse = "[{\"id\":\"602b936938e5ee596440a813\",\"products\":[{\"id\":\"602b936938e5ee596440a811\",\"name\":\"Handy\",\"description\":\"Bestes Handy\",\"price\":255.0,\"category\":\"SMARTPHONE\"},{\"id\":\"602b936938e5ee596440a812\",\"name\":\"iPod\",\"description\":\"Bester iPod\",\"price\":355.0,\"category\":\"MP3\"}],\"orderDate\":\"9.2.2021\",\"price\":610.0,\"userId\":\"602a74164f9ff6408aad5da6\"}]"
+        val expectedResponse = "[{\"id\":\"602b936938e5ee596440a811\",\"name\":\"Handy\",\"description\":\"Bestes Handy\",\"price\":255.0,\"category\":\"SMARTPHONE\"},{\"id\":\"602b936938e5ee596440a812\",\"name\":\"iPod\",\"description\":\"Bester iPod\",\"price\":355.0,\"category\":\"MP3\"}]"
 
-        val result = mockMvc.perform(get("/orders/myOrders/602a74164f9ff6408aad5da6").header("Authorization", token))
+        val result = mockMvc.perform(get("/products").header("Authorization", token))
             .andExpect { status(HttpStatus.OK) }
             .andReturn()
 
@@ -84,37 +82,14 @@ class OrderControllerTest(@Autowired val mockMvc: MockMvc,
     }
 
     @Test
-    fun `should create a new order`(){
+    fun `should get product by id`(){
 
-        val expectedResponse = "{\"id\":\"602b936938e5ee596440a817\",\"products\":[{\"id\":\"602b936938e5ee596440a811\",\"name\":\"Handy\",\"description\":\"Bestes Handy\",\"price\":255.0,\"category\":\"SMARTPHONE\"}],\"orderDate\":\"9.6.2021\",\"price\":1475.0,\"userId\":\"602a74164f9ff6408aad5da6\"}"
-        val requestBody = "{\"id\": \"602b936938e5ee596440a817\", \"orderDate\": \"9.6.2021\",\"price\": 1475,\"products\": [{\"id\":\"602b936938e5ee596440a811\",\"name\":\"Handy\",\"description\":\"Bestes Handy\",\"price\":255.0,\"category\":\"SMARTPHONE\"}],\"userId\": \"602a74164f9ff6408aad5da6\"}"
+        val expectedResponse = "{\"id\":\"602b936938e5ee596440a811\",\"name\":\"Handy\",\"description\":\"Bestes Handy\",\"price\":255.0,\"category\":\"SMARTPHONE\"}"
 
-        val result = mockMvc.perform(post("/orders")
-                .header("Authorization", token)
-            .contentType(MediaType.APPLICATION_JSON)
-                .content(requestBody)
-                )
+        val result = mockMvc.perform(get("/products/602b936938e5ee596440a811").header("Authorization", token))
             .andExpect { status(HttpStatus.OK) }
-            .andReturn()
-
-        assertEquals(expectedResponse, result.response.contentAsString)
-    }
-
-    @Test
-    fun `should create a new order with empty requestbody`(){
-
-        val expectedResponse = ""
-        val requestBody = ""
-
-        val result = mockMvc.perform(post("/orders")
-            .header("Authorization", token)
-            .contentType(MediaType.APPLICATION_JSON)
-            .content(requestBody)
-        )
-            .andExpect { status(HttpStatus.BAD_REQUEST) }
             .andReturn()
 
         assertEquals(expectedResponse, result.response.contentAsString)
     }
 }
-
