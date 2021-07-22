@@ -13,13 +13,15 @@ import src.main.kotlin.de.novatec.productservice.repository.ProductRepository
 class ProductServiceApplication(var productRepository: ProductRepository, var orderRepository: OrderRepository) : CommandLineRunner {
 	override fun run(vararg args: String?) {
 		productRepository.deleteAll()
-		productRepository.save(Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE))
-		productRepository.save(Product("602b936938e5ee596440a812", "iPod", "Device to listen to music or play games", 355f, Category.MP3))
+		val product1 = Product("602b936938e5ee596440a811", "Handy", "Device to telephone and do other things", 255f, Category.SMARTPHONE)
+		val product2 = Product("602b936938e5ee596440a812", "iPod", "Device to listen to music or play games", 355f, Category.MP3)
+		productRepository.save(product1)
+		productRepository.save(product2)
 		println(productRepository.findAll())
 
 		orderRepository.deleteAll()
-		orderRepository.save(Order("602b936938e5ee596440a813", listOf(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE), Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "9.2.2021", 610f, "602a74164f9ff6408aad5da6"))
-		orderRepository.save(Order("602b936938e5ee596440a814", listOf(Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "8.2.2021", 810f, "602a74164f9ff6408aad5da7"))
+		orderRepository.save(Order("602b936938e5ee596440a813", listOf(product1, product2), "9.2.2021", 610f, "602a74164f9ff6408aad5da6"))
+		orderRepository.save(Order("602b936938e5ee596440a814", listOf(product2), "8.2.2021", 255f, "602a74164f9ff6408aad5da7"))
 		println(orderRepository.findAll())
 	}
 }

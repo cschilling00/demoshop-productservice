@@ -10,11 +10,12 @@
 	<groupId>de.novatec</groupId>
 	<artifactId>product-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>graphql-product-service</name>
+	<name>graphql-productservice</name>
 	<properties>
 		<java.version>14</java.version>
 		<kotlin.version>1.5.10</kotlin.version>
-		<project.basedir>src/main/kotlin</project.basedir>
+		<project.basedir>src/main</project.basedir>
+		<test.dir>src/test</test.dir>
 		<start-class>src.main.kotlin.de.novatec.productservice</start-class>
 	</properties>
 	<dependencies>
@@ -86,11 +87,26 @@
 
 	<build>
 		<sourceDirectory>${project.basedir}</sourceDirectory>
-		<testSourceDirectory>/src/test/kotlin</testSourceDirectory>
+		<testSourceDirectory>${test.dir}</testSourceDirectory>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>/src/main/kotlin/de/novatec/productservice/ProductServiceApplication.kt</mainClass>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<configuration>
+					<source>14</source>
+					<target>14</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>3.0.0-M5</version>
 			</plugin>
 			<plugin>
 				<groupId>org.jetbrains.kotlin</groupId>
@@ -110,6 +126,39 @@
 						<version>${kotlin.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.7</version>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>prepare-agent-it</id>
+						<goals>
+							<goal>prepare-agent-integration</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report-it</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report-integration</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

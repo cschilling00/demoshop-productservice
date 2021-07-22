@@ -43,7 +43,7 @@ internal class OrderMutationTest(@Autowired val graphQLTestTemplate: GraphQLTest
     fun callUsermanagement(){
         wireMockServer.stubFor(
             WireMock.post("/graphql")
-                .withRequestBody(WireMock.equalTo("{\"query\": \"mutation { getAuthorities }\"}"))
+                .withRequestBody(WireMock.equalTo("{\"query\": \"query { getAuthorities }\"}"))
                 .withHeader("Authorization",
                     WireMock.containing("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJpYXQiOjE2MjU2ODAzNjN9.TIm2oPpBxcMqVh8lfV_0aj-bcLgK84jn2HJ0wpchZRzWyu-DkozJr5QkPMwCPPBnnYjUQIM1C5c0WjBKgCEgAQ")
                 )
@@ -83,6 +83,16 @@ internal class OrderMutationTest(@Autowired val graphQLTestTemplate: GraphQLTest
         Assertions.assertNotNull(response)
         Assertions.assertTrue(response.isOk)
         JSONAssert.assertEquals(expectedResponse, response.rawResponse.body, true)
+    }
+
+    @Test
+    fun `should create a new order with empty requestbody`(){
+        var response = graphQLTestTemplate.postForResource("request/createEmptyOrder.graphql")
+        println("response: "+response.rawResponse.body.toString())
+        val expectedResponse = "{\"data\":{\"createOrder\":null}}"
+        Assertions.assertNotNull(response)
+        Assertions.assertTrue(response.isOk)
+        Assertions.assertEquals(expectedResponse, response.rawResponse.body)
     }
 
 

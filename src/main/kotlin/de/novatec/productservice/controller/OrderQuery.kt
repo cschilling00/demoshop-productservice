@@ -8,20 +8,9 @@ import src.main.kotlin.de.novatec.productservice.model.Order
 import src.main.kotlin.de.novatec.productservice.service.OrderService
 
 @Component
-class OrderQuery : GraphQLQueryResolver {
+class OrderQuery(@Autowired val orderService: OrderService) : GraphQLQueryResolver {
 
-    @Autowired
-    private lateinit var orderService: OrderService
 
-    @PreAuthorize("hasAuthority('admin')")
-    fun getOrders(): List<Order?> {
-        return orderService.getOrder()
-    }
-
-    @PreAuthorize("hasAuthority('user')")
-    fun getOrderById(id: String): Order? {
-        return orderService.getOrderById(id)
-    }
 
     @PreAuthorize("hasAuthority('user')")
     fun getOrderByUserId(id: String): List<Order?> {

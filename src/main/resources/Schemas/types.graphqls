@@ -1,10 +1,5 @@
 type Mutation {
-    createProduct(product: ProductInput): Product
-    deleteProduct(id: String!): String
-    editProduct(product: ProductInput): Product
     createOrder(order: OrderInput): Order
-    deleteOrder(id: String!): String
-    editOrder(order: OrderInput): Order
 }
 
 type Product {
@@ -46,7 +41,5 @@ input OrderInput {
 type Query {
     getProducts: [Product]!
     getProductById(id: String!): Product
-    getOrders: [Order]!
-    getOrderById(id: String!): Order
     getOrderByUserId(id: String!): [Order]!
 }

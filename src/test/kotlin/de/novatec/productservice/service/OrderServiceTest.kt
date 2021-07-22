@@ -5,9 +5,9 @@ import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
 import io.mockk.junit5.MockKExtension
 import io.mockk.mockk
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
-
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.extension.ExtendWith
 import src.main.kotlin.de.novatec.productservice.model.Category
 import src.main.kotlin.de.novatec.productservice.model.Order
@@ -30,29 +30,6 @@ internal class OrderServiceTest{
 
     @InjectMockKs
     lateinit var orderService: OrderService
-
-    @Test
-    fun `should get all orders from mocked Repository`() {
-        val orders = listOf(Order("602b936938e5ee596440a813", listOf(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE), Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "9.2.2021", 610f, "602a74164f9ff6408aad5da6"), Order("602b936938e5ee596440a814", listOf(Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "8.2.2021", 810f, "602a74164f9ff6408aad5da7"))
-        every { orderRepository.findAll() } returns orders
-        val serviceResult = orderService.getOrder()
-        assertEquals(orderRepository.findAll(), serviceResult)
-    }
-
-    @Test
-    fun `should get order with id 602b936938e5ee596440a813 from mocked Repository`() {
-        var order = Order("602b936938e5ee596440a813", listOf(Product("602b936938e5ee596440a811", "Handy", "Bestes Handy", 255f, Category.SMARTPHONE), Product("602b936938e5ee596440a812", "iPod", "Bester iPod", 355f, Category.MP3)), "9.2.2021", 610f, "602a74164f9ff6408aad5da6")
-        every { orderRepository.findById("602b936938e5ee596440a813") } returns Optional.ofNullable(order) as Optional<Order?>
-        val serviceResult = orderService.getOrderById("602b936938e5ee596440a813")
-        assertEquals(order as Order?, serviceResult)
-    }
-
-    @Test
-    fun `should throw exception while trying to get non existing order from mocked Repository`() {
-        val order = Optional.ofNullable(null)
-        every { orderRepository.findById("602b936938e5ee596440a813") } returns order as Optional<Order?>
-        assertThrows(NoSuchElementException::class.java, { orderService.getOrderById("602b936938e5ee596440a813") })
-    }
 
     @Test
     fun `should get all orders with userId 602a74164f9ff6408aad5da6 from mocked Repository`() {

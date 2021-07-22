@@ -25,7 +25,7 @@ class JwtFilter() : OncePerRequestFilter() {
         var headers = HttpHeaders()
         headers.contentType = MediaType.APPLICATION_JSON
         headers.setBearerAuth(token.toString())
-        val request2 = HttpEntity("{\"query\": \"mutation { getAuthorities }\"}", headers)
+        val request2 = HttpEntity("{\"query\": \"query { getAuthorities }\"}", headers)
         val result = RestTemplate().postForEntity("http://localhost:8081/graphql", request2, String::class.java)
         val node: JsonNode = jacksonObjectMapper().readValue(result.body.toString())
 

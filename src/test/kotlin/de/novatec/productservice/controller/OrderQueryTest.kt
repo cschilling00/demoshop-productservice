@@ -3,7 +3,12 @@ package src.test.kotlin.de.novatec.productservice.controller
 import com.github.tomakehurst.wiremock.WireMockServer
 import com.github.tomakehurst.wiremock.client.WireMock
 import com.graphql.spring.boot.test.GraphQLTestTemplate
-import org.junit.jupiter.api.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.TestInstance
 import org.junit.jupiter.api.extension.ExtendWith
 import org.skyscreamer.jsonassert.JSONAssert
 import org.springframework.beans.factory.annotation.Autowired
@@ -26,7 +31,7 @@ import java.nio.charset.Charset
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @ContextConfiguration(initializers =  [WireMockInitializer::class])
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = [ProductServiceApplication::class])
-internal class OrderQueryTest(@Autowired val graphQLTestTemplate: GraphQLTestTemplate,
+class OrderQueryTest(@Autowired val graphQLTestTemplate: GraphQLTestTemplate,
                               @Autowired val productRepository: ProductRepository,
                               @Autowired val orderRepository: OrderRepository,
                               @Autowired val wireMockServer: WireMockServer) {
@@ -43,7 +48,7 @@ internal class OrderQueryTest(@Autowired val graphQLTestTemplate: GraphQLTestTem
     fun callUsermanagement(){
         wireMockServer.stubFor(
             WireMock.post("/graphql")
-                .withRequestBody(WireMock.equalTo("{\"query\": \"mutation { getAuthorities }\"}"))
+                .withRequestBody(WireMock.equalTo("{\"query\": \"query { getAuthorities }\"}"))
                 .withHeader("Authorization",
                     WireMock.containing("Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ1c2VyIiwiaXNzIjoicHJvZHVjdHNlcnZpY2UtYXBpIiwiaWQiOiI2MDJhNzQxNjRmOWZmNjQwOGFhZDVkYTYiLCJpYXQiOjE2MjU2ODAzNjN9.TIm2oPpBxcMqVh8lfV_0aj-bcLgK84jn2HJ0wpchZRzWyu-DkozJr5QkPMwCPPBnnYjUQIM1C5c0WjBKgCEgAQ")
                 )
@@ -73,30 +78,6 @@ internal class OrderQueryTest(@Autowired val graphQLTestTemplate: GraphQLTestTem
     @AfterEach
     fun afterEach() {
         wireMockServer.resetAll()
-    }
-
-//    @Test
-//    fun `should get all orders`(){
-//        graphQLTestTemplate.clearHeaders()
-//        graphQLTestTemplate.addHeader(
-//            "Authorization",
-//            "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJhZG1pbiIsImlzcyI6InByb2R1Y3RzZXJ2aWNlLWFwaSIsImlkIjoiNjAyYTc0MTY0ZjlmZjY0MDhhYWQ1ZGE3IiwiaWF0IjoxNjI1Njg2MjEzfQ.h40koy8175nlUkoZ_gDNohQMAfxE8Jd-yYggfYEpCk3N_NepZnqKV0Cx-u3akrQWkVwZvSXO4GakoF19biChbw"
-//        )
-//        var response = graphQLTestTemplate.postForResource("request/orders.graphql")
-////        println("response: "+response.rawResponse.body.toString())
-//        val expectedResponse = File("src/test/resources/response/ordersRes.json").readText(Charset.defaultCharset())
-//        Assertions.assertNotNull(response)
-//        Assertions.assertTrue(response.isOk)
-//        JSONAssert.assertEquals(expectedResponse, response.rawResponse.body, true)
-//    }
-
-    @Test
-    fun `should get order with id 602b936938e5ee596440a813`(){
-        var response = graphQLTestTemplate.postForResource("request/orderById.graphql")
-        val expectedResponse = File("src/test/resources/response/orderByIdRes.json").readText(Charset.defaultCharset())
-        Assertions.assertNotNull(response)
-        Assertions.assertTrue(response.isOk)
-        JSONAssert.assertEquals(expectedResponse, response.rawResponse.body, true)
     }
 
     @Test
